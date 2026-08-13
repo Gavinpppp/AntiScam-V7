@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>別急，先查證 | Anti-Scam Story Simulator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ===== 啟動語言選擇彈窗 ===== -->
+    <div id="languageModal" class="language-modal" style="display: none;">
+      <div class="language-modal-content">
+        <div class="language-modal-icon">🌐</div>
+        <h2 class="language-modal-title" data-lang="lang_select_title">選擇語言</h2>
+        <p class="language-modal-subtitle" data-lang="lang_select_subtitle">請選擇你偏好的語言</p>
+        <div class="language-options">
+          <button class="lang-option" data-lang="zh-TW">
+            <span class="lang-option-icon">繁</span>
+            <span class="lang-option-name">繁體中文</span>
+            <span class="lang-detect-hint"></span>
+          </button>
+          <button class="lang-option" data-lang="zh">
+            <span class="lang-option-icon">简</span>
+            <span class="lang-option-name">简体中文</span>
+            <span class="lang-detect-hint"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 語言切換 -->
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="zh-TW">繁體</button>
+      <button class="lang-btn" data-lang="zh">简体</button>
+    </div>
+
+    <!-- 升級通知 -->
+    <div id="levelUpNotification" class="level-up-notification">
+      <div class="level-up-icon">🎉</div>
+      <div class="level-up-text">
+        <span data-lang="level_up">升級了！</span>
+        <span class="level-num">1</span>
+      </div>
+    </div>
+
+    <!-- 勳章解鎖通知 -->
+    <div id="medalNotification" class="medal-notification">
+      <div class="medal-notif-icon">🏅</div>
+      <div class="medal-notif-content">
+        <div class="medal-notif-label" data-lang="medal_unlocked">勳章解鎖！</div>
+        <div class="medal-icon">🔍</div>
+        <div class="medal-name">初次查證</div>
+        <div class="medal-desc">第一次成功識破騙局並選擇查證</div>
+      </div>
+    </div>
+
+    <!-- ===== 開始畫面 ===== -->
+    <section id="startScreen" class="screen start-screen">
+      <div class="start-content">
+        <div class="game-logo">🛡️</div>
+        <h1 class="game-title" data-lang="game_title">別急，先查證</h1>
+        <p class="game-subtitle" data-lang="game_subtitle">香港大學生反詐騙互動遊戲</p>
+        <p class="game-tagline" data-lang="game_tagline">5大關卡 · 真實情境 · 學會保護自己</p>
+        
+        <div class="start-desc">
+          <p data-lang="start_desc">在香港讀大學，你可能接到假冒入境處的電話、收到假銀行釣魚短訊、在網上碰到假租房。這不是測試你聰不聰明——而是測試你在壓力下，能不能記得「先查證」。</p>
+        </div>
+
+        <button id="startBtn" class="btn btn-primary btn-large" data-lang="start_btn">
+          開始遊戲
+        </button>
+
+        <div class="hk-resources">
+          <span>📞 防騙易熱線：<strong>18222</strong></span>
+          <span>🔍 防騙視伏器 Scameter</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 身份選擇畫面 ===== -->
+    <section id="identityScreen" class="screen identity-screen" style="display: none;">
+      <div class="identity-container">
+        <h2 class="section-title" data-lang="choose_identity">選擇你的身份</h2>
+        
+        <div class="identity-cards">
+          <div id="mainlandCard" class="identity-card mainland-card">
+            <div class="identity-icon">🎓</div>
+            <h3 class="identity-title" data-lang="identity_mainland">内地来港学生</h3>
+            <p class="identity-desc">刚来香港，对环境还在适应。语言压力、身份焦虑让你更容易成为假冒公检法、假冒入境处的目标。</p>
+            <div class="identity-tags">
+              <span class="tag">高身份焦虑</span>
+              <span class="tag">语言压力</span>
+              <span class="tag">公检法诈骗</span>
+            </div>
+            <div class="identity-select-hint" data-lang="click_to_select">点击选择</div>
+          </div>
+
+          <div id="localCard" class="identity-card local-card">
+            <div class="identity-icon">🏙️</div>
+            <h3 class="identity-title" data-lang="identity_local">香港本地學生</h3>
+            <p class="identity-desc">土生土長，對銀行、轉數快、PayMe 都熟得不能再熟。但正因太熟悉，反而容易放鬆警惕。</p>
+            <div class="identity-tags">
+              <span class="tag">高熟悉度</span>
+              <span class="tag">低警覺性</span>
+              <span class="tag">釣魚/刷單</span>
+            </div>
+            <div class="identity-select-hint" data-lang="click_to_select">點擊選擇</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 遊戲主畫面 ===== -->
+    <section id="gameScreen" class="screen game-screen" style="display: none;">
+      <!-- 頂部狀態欄 -->
+      <header class="game-header">
+        <div class="header-left">
+          <div class="player-info">
+            <span class="player-level-label" data-lang="player_level">等級</span>
+            <span class="player-level" id="playerLevel">1</span>
+          </div>
+          <div class="xp-display">
+            <span class="xp-label" data-lang="stat_xp">經驗值</span>
+            <span class="xp-value" id="xpValue">0</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="stat-mini stat-risk-mini">
+            <span class="stat-icon">⚠️</span>
+            <span class="stat-value" id="riskValue">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- 主遊戲區域 -->
+      <main class="game-main">
+        <!-- ===== 左側固定屬性面板（暱稱 + 警惕值 + 冷靜值 + 關卡 + 倒計時）===== -->
+        <aside class="stats-panel">
+          <!-- 玩家暱稱 -->
+          <div class="panel-section panel-nickname-section">
+            <label class="panel-label" data-lang="panel_nickname">你的暱稱</label>
+            <input
+              type="text"
+              id="nicknameInput"
+              class="nickname-input"
+              data-lang-placeholder="panel_nickname_placeholder"
+              placeholder="輸入暱稱…"
+              maxlength="20"
+            >
+          </div>
+
+          <!-- 警惕值 -->
+          <div class="panel-section panel-stat-section">
+            <div class="stat-header">
+              <span class="stat-label" data-lang="panel_vigilance">警惕值</span>
+              <span class="stat-value" id="alertnessValue">50</span>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-fill stat-alertness" id="alertnessBar" style="width: 50%"></div>
+            </div>
+          </div>
+
+          <!-- 冷靜值 -->
+          <div class="panel-section panel-stat-section">
+            <div class="stat-header">
+              <span class="stat-label" data-lang="panel_calmness">冷靜值</span>
+              <span class="stat-value" id="calmnessValue">80</span>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-fill stat-calmness" id="calmnessBar" style="width: 80%"></div>
+            </div>
+          </div>
+
+          <!-- 當前關卡：第 X / N 關 -->
+          <div class="panel-section panel-level-section">
+            <span class="panel-level-display" id="panelLevelDisplay">第 1 / 5 關</span>
+          </div>
+
+          <!-- 倒計時（圓形進度 + 數字）-->
+          <div class="panel-section panel-countdown-section">
+            <span class="panel-label" data-lang="panel_countdown">倒計時</span>
+            <div class="countdown-ring" id="countdownDisplay" style="display: none;">
+              <svg class="countdown-svg" width="64" height="64" viewBox="0 0 64 64">
+                <circle class="countdown-track" cx="32" cy="32" r="26" />
+                <circle class="countdown-progress" id="countdownRing" cx="32" cy="32" r="26" />
+              </svg>
+              <span class="countdown-number" id="countdownNumber">15</span>
+            </div>
+          </div>
+
+          <!-- 次要屬性（摺疊區）-->
+          <details class="panel-secondary-stats">
+            <summary class="panel-summary">📊 更多數據</summary>
+            <div class="stat-item">
+              <div class="stat-header">
+                <span class="stat-label" data-lang="panel_stat_info">資訊量</span>
+                <span class="stat-value" id="informationValue">50</span>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-fill stat-information" id="informationBar" style="width: 50%"></div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-header">
+                <span class="stat-label" data-lang="panel_stat_risk">風險值</span>
+                <span class="stat-value" id="riskValue">0</span>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-fill stat-risk" id="riskBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-header">
+                <span class="stat-label" data-lang="panel_stat_money">財產</span>
+                <span class="stat-value" id="moneyValue">100</span>
+              </div>
+              <div class="stat-bar">
+                <div class="stat-fill stat-money" id="moneyBar" style="width: 100%"></div>
+              </div>
+            </div>
+            <div class="stat-item stat-score-item">
+              <div class="stat-header">
+                <span class="stat-label" data-lang="panel_stat_score">反詐分</span>
+                <span class="stat-value" id="scoreValue">100</span>
+              </div>
+            </div>
+          </details>
+        </aside>
+
+        <!-- 場景卡片 -->
+        <div class="scene-area">
+          <div id="sceneCard" class="scene-card">
+            <div class="speaker-info">
+              <span id="speakerName" class="speaker-name speaker-system">系統</span>
+            </div>
+
+            <div id="sceneText" class="scene-text">
+              載入中…
+            </div>
+
+            <!-- 視覺內容容器（釣魚卡、語音來電、對話等） -->
+            <div id="visualContainer" class="visual-container" style="display: none;">
+            </div>
+
+            <!-- 回饋訊息 -->
+            <div id="feedbackBox" class="feedback-box" style="display: none;">
+            </div>
+
+            <!-- 選項按鈕 -->
+            <div id="choicesContainer" class="choices-container">
+            </div>
+
+            <!-- 文字輸入區域 -->
+            <div id="inputContainer" class="input-container" style="display: none;">
+              <input 
+                type="text" 
+                id="interactiveInput" 
+                class="interactive-input" 
+                placeholder="輸入你想說的話…"
+                maxlength="200"
+              >
+              <button id="submitInputBtn" class="btn btn-submit">發送</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- ===== 關卡過渡遮罩 ===== -->
+    <div id="levelTransitionOverlay" class="level-transition-overlay">
+      <div class="transition-content">
+        <div class="transition-icon" id="transitionLevelIcon">🎯</div>
+        <h2 class="transition-title" id="transitionLevelTitle">關卡名稱</h2>
+        <p class="transition-desc" id="transitionLevelDesc">關卡描述</p>
+      </div>
+    </div>
+
+    <!-- ===== 選錯警報動畫（紅色邊緣閃爍 + 震動 + 圖示提示）===== -->
+    <div id="alarmOverlay" class="alarm-overlay"></div>
+    <div id="alarmIcon" class="alarm-icon-container">
+      <div class="alarm-icon-emoji">⚠️</div>
+      <div class="alarm-text" id="alarmText">⚠️ 危險！這可能是詐騙！</div>
+    </div>
+
+    <!-- ===== 結局結算面板 ===== -->
+    <section id="endingScreen" class="screen ending-screen" style="display: none;">
+      <div class="ending-container">
+
+        <!-- 結局標題 -->
+        <div class="ending-header">
+          <div class="ending-icon" id="endingIcon">🎭</div>
+          <h1 class="ending-title" id="endingTitle">結局標題</h1>
+          <p class="ending-description" id="endingDescription">結局描述</p>
+        </div>
+
+        <!-- 模塊1：反詐分數 -->
+        <div class="panel panel-score" id="panelScore">
+          <div class="panel-title">📊 反詐分數</div>
+          <div class="score-big" id="scoreBig">0</div>
+          <div class="score-label" id="scoreLabel">本局總得分</div>
+          <div class="level-stats" id="levelStats">
+            <!-- JS 動態填充每關對錯統計 -->
+          </div>
+        </div>
+
+        <!-- 模塊2：表現等級 -->
+        <div class="panel panel-tier" id="panelTier">
+          <div class="panel-title">🏅 表現等級</div>
+          <div class="tier-display" id="tierDisplay">
+            <div class="tier-icon" id="tierIcon">🌱</div>
+            <div class="tier-name" id="tierName">反詐萌新</div>
+            <div class="tier-eval" id="tierEval">評價內容</div>
+          </div>
+        </div>
+
+        <!-- 模塊3：榮譽 & 成就 -->
+        <div class="panel panel-medals" id="panelMedals">
+          <div class="panel-title">🎖️ 榮譽 & 成就</div>
+          <div class="medals-list" id="medalsList">
+            <!-- JS 動態填充已解鎖 + 灰化未解鎖 -->
+          </div>
+        </div>
+
+        <!-- 模塊4：分關卡反詐知識 -->
+        <div class="panel panel-knowledge" id="panelKnowledge">
+          <div class="panel-title">📚 分關卡反詐知識</div>
+          <div class="knowledge-list" id="knowledgeList">
+            <!-- JS 動態按關卡順序渲染 -->
+          </div>
+        </div>
+
+        <!-- 模塊5：關卡配套防範措施 -->
+        <div class="panel panel-defense" id="panelDefense">
+          <div class="panel-title">🛡️ 關卡配套防範措施</div>
+          <div class="defense-list" id="defenseList">
+            <!-- JS 動態按關卡順序渲染 -->
+          </div>
+        </div>
+
+        <!-- 模塊6：反詐小 Tips -->
+        <div class="panel panel-tips" id="panelTips">
+          <div class="panel-title">💡 反詐小 Tips</div>
+          <div class="tips-scroll" id="tipsScroll">
+            <!-- JS 動態填充通用提醒 -->
+          </div>
+        </div>
+
+        <!-- 底部按鈕 -->
+        <div class="ending-actions-row">
+          <button id="backToMenuBtn" class="btn btn-secondary">
+            🏠 返回主菜單
+          </button>
+          <button id="restartBtn" class="btn btn-primary">
+            🔄 重新挑戰
+          </button>
+        </div>
+
+        <!-- 求助資源 -->
+        <div class="ending-resources">
+          <p>📞 <strong>防騙易熱線 18222</strong>（24 小時）</p>
+          <p>🔍 <strong>防騙視伏器 Scameter</strong> — 查號碼、查連結</p>
+          <p>👮 <strong>香港警務處 ADCC</strong> 反詐騙協調中心</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 遊戲腳本（載入順序：data.js -> lang.js -> levels.js -> _alias_bootstrap -> level-engine.js -> enhanced-ui.js -> game.js） -->
+  <script src="data.js"></script>
+  <script src="lang.js"></script>
+  <script src="levels.js"></script>
+  <script>
+    // 覆蓋舊 data.js 中嘅 const levels，優先使用 levels.js LEVELS 配置
+    // (必須在 level-engine/game 之前執行)
+    (function(){
+      if (typeof LEVELS !== 'undefined' && LEVELS.length > 0) {
+        try { window.levels = LEVELS; } catch(e) {}
+      }
+    })();
+  </script>
+  <script src="level-engine.js"></script>
+  <script src="enhanced-ui.js"></script>
+  <script src="game.js"></script>
+  <script src="pear-assistant.js"></script>
+</body>
+</html>
